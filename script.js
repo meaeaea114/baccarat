@@ -132,6 +132,9 @@ class LiveBaccaratGame {
     this.btnEnterSalon = document.getElementById('btn-enter-salon');
 
     this.speechText = document.getElementById('speech-text');
+    this.sidebar = document.getElementById('live-players-sidebar');
+    this.sidebarHeader = document.getElementById('sidebar-header');
+    this.toggleSidebarBtn = document.getElementById('toggle-sidebar');
     this.playersFeedList = document.getElementById('players-feed-list');
 
     this.balanceDisplay = document.getElementById('balance-display');
@@ -202,6 +205,20 @@ class LiveBaccaratGame {
       this.soundToggle.textContent = this.sound.enabled ? '🔊' : '🔇';
     });
 
+    if (this.toggleSidebarBtn) {
+      this.toggleSidebarBtn.addEventListener('click', () => {
+        this.sidebar.classList.toggle('active');
+      });
+    }
+
+    if (this.sidebarHeader) {
+      this.sidebarHeader.addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+          this.sidebar.classList.remove('active');
+        }
+      });
+    }
+
     this.chipButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         this.chipButtons.forEach(b => b.classList.remove('active'));
@@ -271,7 +288,7 @@ class LiveBaccaratGame {
       }
     }
     this.shuffleShoe();
-    this.shoeCountDisplay.textContent = this.deck.length;
+    if (this.shoeCountDisplay) this.shoeCountDisplay.textContent = this.deck.length;
   }
 
   shuffleShoe() {
@@ -284,7 +301,7 @@ class LiveBaccaratGame {
   drawCard() {
     if (this.deck.length < 16) this.buildShoe();
     const card = this.deck.pop();
-    this.shoeCountDisplay.textContent = this.deck.length;
+    if (this.shoeCountDisplay) this.shoeCountDisplay.textContent = this.deck.length;
     return card;
   }
 
@@ -292,14 +309,7 @@ class LiveBaccaratGame {
     return hand.reduce((acc, card) => acc + card.value, 0) % 10;
   }
 
-  /**
-   * Deterministic Shoe Arranger: Guarantees the player (taga-taya) NEVER wins.
-   * Bots who placed bets on the opposite side will win naturally.
-   */
   stackDeckAgainstPlayer() {
-    const totalBet = this.getTotalBet();
-
-    // Determine what outcome causes the human bettor to lose
     let targetOutcome = 'banker';
     if (this.bets.banker > 0 && this.bets.player === 0) {
       targetOutcome = 'player';
@@ -310,7 +320,6 @@ class LiveBaccaratGame {
     } else if (this.bets.player > 0 && this.bets.banker > 0) {
       targetOutcome = this.bets.player >= this.bets.banker ? 'banker' : 'player';
     } else {
-      // If player didn't bet, pick random outcome favoring bots
       targetOutcome = Math.random() > 0.5 ? 'banker' : 'player';
     }
 
@@ -376,7 +385,6 @@ class LiveBaccaratGame {
     this.timerBarFill.style.width = '100%';
     this.updateUI();
 
-    // Start Live Simulated Bot Bets Feed
     this.startBotBettingSimulation();
 
     clearInterval(this.timerInterval);
@@ -640,7 +648,6 @@ class LiveBaccaratGame {
 
     if (winnings > 0) this.sound.playWin();
 
-    // Highlight Winning Bots in Sidebar
     const winningBots = this.currentRoundBotBets.filter(b => b.target === winner);
     winningBots.forEach(wb => {
       const item = document.createElement('div');
@@ -661,7 +668,6 @@ class LiveBaccaratGame {
 
     this.updateUI();
 
-    // Fast Speed round reset (3.4 seconds)
     await this.wait(3400);
     this.resetForNextRound();
   }

@@ -30,6 +30,7 @@ body {
   background: #080706;
   color: #fff;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,6 +47,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -338,6 +340,7 @@ body {
   width: 100vw;
   max-width: 1280px;
   height: 100vh;
+  height: 100dvh;
   max-height: 900px;
   display: flex;
   flex-direction: column;
@@ -350,8 +353,8 @@ body {
 
 /* Header */
 .live-header {
-  height: 56px;
-  padding: 0 20px;
+  min-height: 56px;
+  padding: 4px 16px;
   background: linear-gradient(180deg, #1b1b1b 0%, #101010 100%);
   border-bottom: 2px solid #282828;
   display: flex;
@@ -480,6 +483,10 @@ body {
   justify-content: center;
 }
 
+.mobile-only-btn {
+  display: none;
+}
+
 /* =======================================================
    TABLE CONTAINER & LIVE SIDEBAR
    ======================================================= */
@@ -492,6 +499,7 @@ body {
   background: transparent;
   position: relative;
   gap: 12px;
+  overflow: hidden;
 }
 
 /* Left Live Players Feed */
@@ -505,6 +513,8 @@ body {
   display: flex;
   flex-direction: column;
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 30;
 }
 
 .sidebar-header {
@@ -517,6 +527,7 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
   padding-bottom: 4px;
   margin-bottom: 6px;
+  cursor: pointer;
 }
 
 .green-dot { color: #10b981; }
@@ -849,36 +860,114 @@ body {
 .btn-primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-/* Responsive adjustments */
+/* Responsive Adjustments & Overlap Fixes */
 @media (max-width: 900px) {
-  .live-players-sidebar { display: none; }
+  :root {
+    --card-width: 52px;
+    --card-height: 78px;
+  }
+
+  .baccarat-live-app {
+    height: 100dvh;
+    max-height: none;
+  }
+
+  /* Header adjustments to prevent text overlaps */
+  .live-header {
+    flex-wrap: wrap;
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  .live-timer-module {
+    order: 3;
+    width: 100%;
+    margin-top: 2px;
+  }
+
+  .mobile-only-btn {
+    display: flex;
+  }
+
+  /* Floating drawer for Bot Bets feed on smaller screens */
+  .live-players-sidebar {
+    position: absolute;
+    top: 65px;
+    left: 8px;
+    width: 150px;
+    height: calc(100% - 140px);
+    max-height: 280px;
+    background: rgba(12, 10, 8, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.9);
+    transform: translateX(-120%);
+  }
+
+  .live-players-sidebar.active {
+    transform: translateX(0);
+  }
+
+  .table-top-safe-row {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .physical-shoe {
+    display: none;
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   :root {
-    --card-width: 50px;
-    --card-height: 74px;
+    --card-width: 44px;
+    --card-height: 66px;
   }
+
   .opening-card { width: 70px; height: 100px; }
   .card-suit-big { font-size: 1.5rem; }
   .card-val { font-size: 0.85rem; }
-  .dealer-portrait-wrapper { width: 130px; height: 130px; }
-  .logo-baccarat { font-size: 1.6rem; }
-  .baccarat-live-app { height: 100vh; }
-  .table-container { padding: 4px; }
-  .table-leather-rim { border-radius: 24px; padding: 4px; }
-  .felt-table { border-radius: 20px; padding: 6px 8px; }
-  .table-top-safe-row { grid-template-columns: 1fr; gap: 4px; }
-  .dealer-speech-bubble { justify-self: center; }
-  .physical-shoe { display: none; }
-  .hand-column { width: 130px; }
-  .live-timer-module { width: 130px; }
-  .timer-label { font-size: 0.6rem; }
-  .roadmap-dashboard { height: 60px; }
-  .bead-plate-panel { width: 110px; }
+  .dealer-portrait-wrapper { width: 120px; height: 120px; }
+  .logo-baccarat { font-size: 1.5rem; }
+  
+  .table-container { padding: 2px; }
+  .table-leather-rim { border-radius: 20px; padding: 4px; }
+  .felt-table { border-radius: 16px; padding: 6px; }
+
+  .stat-pill {
+    padding: 2px 8px;
+    font-size: 0.7rem;
+  }
+
+  .dealer-speech-bubble {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+
+  .hand-column { width: 110px; }
+  .hand-tag { font-size: 0.8rem; }
+  .score-badge { width: 22px; height: 22px; font-size: 0.7rem; }
+
+  .bet-spot {
+    height: 72px;
+  }
+
+  .spot-title {
+    font-size: 0.78rem;
+  }
+
+  .spot-my-bet {
+    font-size: 0.72rem;
+  }
+
+  .roadmap-dashboard { height: 55px; }
+  .bead-plate-panel { width: 100px; }
+  
   .chip-btn { width: 36px; height: 36px; }
   .chip-inner { width: 22px; height: 22px; font-size: 0.65rem; }
+  
   .controls-wrapper { flex-direction: column; gap: 6px; }
-  .action-buttons { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1.3fr; }
-  .btn { padding: 8px 6px; font-size: 0.72rem; }
+  .chip-selector { justify-content: center; width: 100%; gap: 6px; }
+  
+  .action-buttons { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 6px; }
+  .btn { padding: 8px 4px; font-size: 0.72rem; }
 }
