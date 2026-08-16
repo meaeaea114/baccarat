@@ -13,62 +13,18 @@
 
   <!-- Speed Baccarat Live Entrance Overlay -->
   <div id="casino-entrance" class="casino-entrance">
-    
-    <!-- Floating 3D Cards Visible in Opening Screen -->
     <div class="entrance-floating-cards">
-      <div class="opening-card card-tl">
-        <div class="card-inner black">
-          <div class="card-val">A<span>♠</span></div>
-          <div class="card-suit-big">♠</div>
-          <div class="card-val bot">A<span>♠</span></div>
-        </div>
-      </div>
-      <div class="opening-card card-ml">
-        <div class="card-inner red">
-          <div class="card-val">K<span>♥</span></div>
-          <div class="card-suit-big">♥</div>
-          <div class="card-val bot">K<span>♥</span></div>
-        </div>
-      </div>
-      <div class="opening-card card-bl">
-        <div class="card-inner black">
-          <div class="card-val">8<span>♣</span></div>
-          <div class="card-suit-big">♣</div>
-          <div class="card-val bot">8<span>♣</span></div>
-        </div>
-      </div>
-
-      <div class="opening-card card-tr">
-        <div class="card-inner red">
-          <div class="card-val">9<span>♦</span></div>
-          <div class="card-suit-big">♦</div>
-          <div class="card-val bot">9<span>♦</span></div>
-        </div>
-      </div>
-      <div class="opening-card card-mr">
-        <div class="card-inner red">
-          <div class="card-val">Q<span>♥</span></div>
-          <div class="card-suit-big">♥</div>
-          <div class="card-val bot">Q<span>♥</span></div>
-        </div>
-      </div>
-      <div class="opening-card card-br">
-        <div class="card-inner black">
-          <div class="card-val">J<span>♠</span></div>
-          <div class="card-suit-big">♠</div>
-          <div class="card-val bot">J<span>♠</span></div>
-        </div>
-      </div>
-
+      <div class="opening-card card-tl"><div class="card-inner black"><div class="card-val">A<span>♠</span></div><div class="card-suit-big">♠</div><div class="card-val bot">A<span>♠</span></div></div></div>
+      <div class="opening-card card-ml"><div class="card-inner red"><div class="card-val">K<span>♥</span></div><div class="card-suit-big">♥</div><div class="card-val bot">K<span>♥</span></div></div></div>
+      <div class="opening-card card-tr"><div class="card-inner red"><div class="card-val">9<span>♦</span></div><div class="card-suit-big">♦</div><div class="card-val bot">9<span>♦</span></div></div></div>
+      <div class="opening-card card-br"><div class="card-inner black"><div class="card-val">J<span>♠</span></div><div class="card-suit-big">♠</div><div class="card-val bot">J<span>♠</span></div></div></div>
       <div class="casino-glow-flare flare-left"></div>
       <div class="casino-glow-flare flare-right"></div>
     </div>
 
-    <!-- Door Background Panels -->
     <div class="entrance-doors door-left"></div>
     <div class="entrance-doors door-right"></div>
     
-    <!-- Central Entrance Box -->
     <div class="entrance-content">
       <div class="dealer-hero-card">
         <div class="dealer-portrait-wrapper">
@@ -134,38 +90,31 @@
       </div>
     </header>
 
-    <!-- Main Casino Table Area With Live Player Side Feed -->
+    <!-- Main Casino Table -->
     <main class="table-container">
-      
-      <!-- Left Live Online Players Activity Feed -->
+      <!-- Left Live Sidebar -->
       <aside class="live-players-sidebar">
         <div class="sidebar-header">
           <span>ONLINE (248)</span>
           <span class="green-dot">●</span>
         </div>
-        <div class="players-feed-list" id="players-feed-list">
-          <!-- Dynamically Populated Bot Bets -->
-        </div>
+        <div class="players-feed-list" id="players-feed-list"></div>
       </aside>
 
-      <!-- Center Main Table -->
       <div class="table-leather-rim">
         <div class="felt-table">
           
-          <!-- Top Safe Area Header inside Table -->
+          <!-- Top Safe Area Header -->
           <div class="table-top-safe-row">
-            <!-- Dealer Speech (Safely Padded) -->
             <div class="dealer-speech-bubble" id="dealer-speech">
               <span class="speech-text" id="speech-text">"Welcome to Speed Baccarat! Place your bets."</span>
             </div>
 
-            <!-- Studio Watermark -->
             <div class="felt-watermark">
               <div class="wm-title">SPEED BACCARAT LIVE</div>
-              <div class="wm-rules">BANKER PAYS 0.95:1 • PLAYER PAYS 1:1 • TIE PAYS 8:1</div>
+              <div class="wm-rules">BANKER PAYS 0.95:1 • PLAYER PAYS 1:1</div>
             </div>
 
-            <!-- Physical Dealing Shoe -->
             <div class="physical-shoe" id="physical-shoe">
               <div class="shoe-deck-front"></div>
               <div class="shoe-indicator-tag">
@@ -186,7 +135,6 @@
 
           <!-- Hands Arena -->
           <div class="hands-arena">
-            <!-- Player Hand -->
             <div class="hand-column" id="player-hand-container">
               <div class="hand-header">
                 <span class="hand-tag player-tag">PLAYER</span>
@@ -198,14 +146,10 @@
               </div>
             </div>
 
-            <!-- Center Table Crest -->
             <div class="arena-center-divider">
-              <div class="table-crest">
-                <span>VIP</span>
-              </div>
+              <div class="table-crest"><span>VIP</span></div>
             </div>
 
-            <!-- Banker Hand -->
             <div class="hand-column" id="banker-hand-container">
               <div class="hand-header">
                 <span class="hand-tag banker-tag">BANKER</span>
@@ -220,7 +164,6 @@
 
           <!-- Betting Grid Layout -->
           <div class="betting-layout">
-            <!-- Player Spot -->
             <div class="bet-spot spot-player" data-target="player" id="spot-player">
               <div class="spot-live-totals" id="live-pool-player">👥 $14,250</div>
               <div class="chip-stack-zone" id="stack-player"></div>
@@ -231,7 +174,6 @@
               </div>
             </div>
 
-            <!-- Tie Spot -->
             <div class="bet-spot spot-tie" data-target="tie" id="spot-tie">
               <div class="spot-live-totals" id="live-pool-tie">👥 $2,840</div>
               <div class="chip-stack-zone" id="stack-tie"></div>
@@ -242,7 +184,6 @@
               </div>
             </div>
 
-            <!-- Banker Spot -->
             <div class="bet-spot spot-banker" data-target="banker" id="spot-banker">
               <div class="spot-live-totals" id="live-pool-banker">👥 $21,100</div>
               <div class="chip-stack-zone" id="stack-banker"></div>
@@ -258,7 +199,7 @@
       </div>
     </main>
 
-    <!-- Bottom Multi-Road Live Scoreboard & Controls Panel -->
+    <!-- Bottom Scoreboard & Controls Panel -->
     <footer class="bottom-panel">
       <div class="roadmap-dashboard">
         <div class="roadmap-panel bead-plate-panel">
@@ -280,21 +221,11 @@
 
       <div class="controls-wrapper">
         <div class="chip-selector">
-          <button class="chip-btn chip-5 active" data-val="5">
-            <span class="chip-inner">5</span>
-          </button>
-          <button class="chip-btn chip-25" data-val="25">
-            <span class="chip-inner">25</span>
-          </button>
-          <button class="chip-btn chip-100" data-val="100">
-            <span class="chip-inner">100</span>
-          </button>
-          <button class="chip-btn chip-500" data-val="500">
-            <span class="chip-inner">500</span>
-          </button>
-          <button class="chip-btn chip-1000" data-val="1000">
-            <span class="chip-inner">1K</span>
-          </button>
+          <button class="chip-btn chip-5 active" data-val="5"><span class="chip-inner">5</span></button>
+          <button class="chip-btn chip-25" data-val="25"><span class="chip-inner">25</span></button>
+          <button class="chip-btn chip-100" data-val="100"><span class="chip-inner">100</span></button>
+          <button class="chip-btn chip-500" data-val="500"><span class="chip-inner">500</span></button>
+          <button class="chip-btn chip-1000" data-val="1000"><span class="chip-inner">1K</span></button>
         </div>
 
         <div class="action-buttons">
