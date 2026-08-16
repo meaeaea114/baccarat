@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SPEED BACCARAT LIVE - VIP Salon</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Speed Baccarat Live Entrance Overlay -->
+  <div id="casino-entrance" class="casino-entrance">
+    
+    <!-- Floating 3D Cards Visible in Opening Screen -->
+    <div class="entrance-floating-cards">
+      <div class="opening-card card-tl">
+        <div class="card-inner black">
+          <div class="card-val">A<span>♠</span></div>
+          <div class="card-suit-big">♠</div>
+          <div class="card-val bot">A<span>♠</span></div>
+        </div>
+      </div>
+      <div class="opening-card card-ml">
+        <div class="card-inner red">
+          <div class="card-val">K<span>♥</span></div>
+          <div class="card-suit-big">♥</div>
+          <div class="card-val bot">K<span>♥</span></div>
+        </div>
+      </div>
+      <div class="opening-card card-bl">
+        <div class="card-inner black">
+          <div class="card-val">8<span>♣</span></div>
+          <div class="card-suit-big">♣</div>
+          <div class="card-val bot">8<span>♣</span></div>
+        </div>
+      </div>
+
+      <div class="opening-card card-tr">
+        <div class="card-inner red">
+          <div class="card-val">9<span>♦</span></div>
+          <div class="card-suit-big">♦</div>
+          <div class="card-val bot">9<span>♦</span></div>
+        </div>
+      </div>
+      <div class="opening-card card-mr">
+        <div class="card-inner red">
+          <div class="card-val">Q<span>♥</span></div>
+          <div class="card-suit-big">♥</div>
+          <div class="card-val bot">Q<span>♥</span></div>
+        </div>
+      </div>
+      <div class="opening-card card-br">
+        <div class="card-inner black">
+          <div class="card-val">J<span>♠</span></div>
+          <div class="card-suit-big">♠</div>
+          <div class="card-val bot">J<span>♠</span></div>
+        </div>
+      </div>
+
+      <div class="casino-glow-flare flare-left"></div>
+      <div class="casino-glow-flare flare-right"></div>
+    </div>
+
+    <!-- Door Background Panels -->
+    <div class="entrance-doors door-left"></div>
+    <div class="entrance-doors door-right"></div>
+    
+    <!-- Central Entrance Box -->
+    <div class="entrance-content">
+      <div class="dealer-hero-card">
+        <div class="dealer-portrait-wrapper">
+          <img src="dealer.jpg" alt="Live Dealer" class="dealer-live-img" />
+          <div class="live-studio-badge">
+            <span class="pulse-dot"></span> LIVE DEALER • MIA
+          </div>
+        </div>
+
+        <div class="speed-logo-container">
+          <div class="speed-slash">SPEED</div>
+          <h1 class="logo-baccarat">BACCARAT</h1>
+          <div class="logo-live-tag">
+            <span class="tag-bars">||</span> LIVE
+          </div>
+        </div>
+      </div>
+
+      <div class="entrance-loader-box">
+        <div class="entrance-loader-bar" id="entrance-loader-bar"></div>
+      </div>
+      <span class="entrance-status" id="entrance-status">CONNECTING TO VIP SPEED STREAM...</span>
+
+      <button id="btn-enter-salon" class="btn-enter-salon hidden">ENTER STUDIO</button>
+    </div>
+  </div>
+
+  <!-- Main Game App -->
+  <div class="baccarat-live-app">
+    <!-- Top Live Header -->
+    <header class="live-header">
+      <div class="live-left-meta">
+        <div class="live-badge">
+          <span class="pulse-dot"></span> LIVE
+        </div>
+        <div class="dealer-mini-profile">
+          <img src="dealer.jpg" alt="Live Dealer" class="dealer-thumb" />
+          <div class="table-info">
+            <span class="table-name">SPEED TABLE #01</span>
+            <span class="dealer-name">HOST: MIA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Speed Betting Countdown Bar -->
+      <div class="live-timer-module" id="timer-module">
+        <div class="timer-label" id="timer-label">PLACE YOUR BETS</div>
+        <div class="timer-bar-track">
+          <div class="timer-bar-fill" id="timer-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="live-right-meta">
+        <div class="stat-pill balance-pill">
+          <span class="stat-label">BALANCE</span>
+          <span class="stat-val" id="balance-display">$10,000</span>
+        </div>
+        <div class="stat-pill bet-pill">
+          <span class="stat-label">BET</span>
+          <span class="stat-val" id="total-bet-display">$0</span>
+        </div>
+        <button id="sound-toggle" class="icon-btn" title="Toggle Sound">🔊</button>
+      </div>
+    </header>
+
+    <!-- Main Casino Table Area With Live Player Side Feed -->
+    <main class="table-container">
+      
+      <!-- Left Live Online Players Activity Feed -->
+      <aside class="live-players-sidebar">
+        <div class="sidebar-header">
+          <span>ONLINE (248)</span>
+          <span class="green-dot">●</span>
+        </div>
+        <div class="players-feed-list" id="players-feed-list">
+          <!-- Dynamically Populated Bot Bets -->
+        </div>
+      </aside>
+
+      <!-- Center Main Table -->
+      <div class="table-leather-rim">
+        <div class="felt-table">
+          
+          <!-- Top Safe Area Header inside Table -->
+          <div class="table-top-safe-row">
+            <!-- Dealer Speech (Safely Padded) -->
+            <div class="dealer-speech-bubble" id="dealer-speech">
+              <span class="speech-text" id="speech-text">"Welcome to Speed Baccarat! Place your bets."</span>
+            </div>
+
+            <!-- Studio Watermark -->
+            <div class="felt-watermark">
+              <div class="wm-title">SPEED BACCARAT LIVE</div>
+              <div class="wm-rules">BANKER PAYS 0.95:1 • PLAYER PAYS 1:1 • TIE PAYS 8:1</div>
+            </div>
+
+            <!-- Physical Dealing Shoe -->
+            <div class="physical-shoe" id="physical-shoe">
+              <div class="shoe-deck-front"></div>
+              <div class="shoe-indicator-tag">
+                <span>SHOE</span>
+                <strong id="shoe-count">416</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Result Modal Overlay -->
+          <div id="live-announcement" class="live-announcement hidden">
+            <div class="announcement-card" id="announcement-card">
+              <div class="announcement-title" id="announcement-title">BANKER WINS</div>
+              <div class="announcement-payout" id="announcement-payout">+ $500</div>
+              <div class="announcement-sub" id="announcement-sub">142 Players Won</div>
+            </div>
+          </div>
+
+          <!-- Hands Arena -->
+          <div class="hands-arena">
+            <!-- Player Hand -->
+            <div class="hand-column" id="player-hand-container">
+              <div class="hand-header">
+                <span class="hand-tag player-tag">PLAYER</span>
+                <div class="score-badge" id="player-score">0</div>
+              </div>
+              <div class="card-slots" id="player-cards">
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+              </div>
+            </div>
+
+            <!-- Center Table Crest -->
+            <div class="arena-center-divider">
+              <div class="table-crest">
+                <span>VIP</span>
+              </div>
+            </div>
+
+            <!-- Banker Hand -->
+            <div class="hand-column" id="banker-hand-container">
+              <div class="hand-header">
+                <span class="hand-tag banker-tag">BANKER</span>
+                <div class="score-badge" id="banker-score">0</div>
+              </div>
+              <div class="card-slots" id="banker-cards">
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Betting Grid Layout -->
+          <div class="betting-layout">
+            <!-- Player Spot -->
+            <div class="bet-spot spot-player" data-target="player" id="spot-player">
+              <div class="spot-live-totals" id="live-pool-player">👥 $14,250</div>
+              <div class="chip-stack-zone" id="stack-player"></div>
+              <div class="spot-meta">
+                <span class="spot-title">PLAYER</span>
+                <span class="spot-odds">1 : 1</span>
+                <span class="spot-my-bet" id="amt-player">$0</span>
+              </div>
+            </div>
+
+            <!-- Tie Spot -->
+            <div class="bet-spot spot-tie" data-target="tie" id="spot-tie">
+              <div class="spot-live-totals" id="live-pool-tie">👥 $2,840</div>
+              <div class="chip-stack-zone" id="stack-tie"></div>
+              <div class="spot-meta">
+                <span class="spot-title">TIE</span>
+                <span class="spot-odds">8 : 1</span>
+                <span class="spot-my-bet" id="amt-tie">$0</span>
+              </div>
+            </div>
+
+            <!-- Banker Spot -->
+            <div class="bet-spot spot-banker" data-target="banker" id="spot-banker">
+              <div class="spot-live-totals" id="live-pool-banker">👥 $21,100</div>
+              <div class="chip-stack-zone" id="stack-banker"></div>
+              <div class="spot-meta">
+                <span class="spot-title">BANKER</span>
+                <span class="spot-odds">0.95 : 1</span>
+                <span class="spot-my-bet" id="amt-banker">$0</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Multi-Road Live Scoreboard & Controls Panel -->
+    <footer class="bottom-panel">
+      <div class="roadmap-dashboard">
+        <div class="roadmap-panel bead-plate-panel">
+          <div class="roadmap-header">BEAD ROAD</div>
+          <div class="bead-plate" id="bead-plate"></div>
+        </div>
+
+        <div class="roadmap-panel big-road-panel">
+          <div class="roadmap-header">BIG ROAD</div>
+          <div class="big-road-grid" id="big-road"></div>
+        </div>
+
+        <div class="roadmap-stats">
+          <div class="stat-row"><span class="c-p">PLAYER:</span> <strong id="stat-p">0%</strong></div>
+          <div class="stat-row"><span class="c-b">BANKER:</span> <strong id="stat-b">0%</strong></div>
+          <div class="stat-row"><span class="c-t">TIE:</span> <strong id="stat-t">0%</strong></div>
+        </div>
+      </div>
+
+      <div class="controls-wrapper">
+        <div class="chip-selector">
+          <button class="chip-btn chip-5 active" data-val="5">
+            <span class="chip-inner">5</span>
+          </button>
+          <button class="chip-btn chip-25" data-val="25">
+            <span class="chip-inner">25</span>
+          </button>
+          <button class="chip-btn chip-100" data-val="100">
+            <span class="chip-inner">100</span>
+          </button>
+          <button class="chip-btn chip-500" data-val="500">
+            <span class="chip-inner">500</span>
+          </button>
+          <button class="chip-btn chip-1000" data-val="1000">
+            <span class="chip-inner">1K</span>
+          </button>
+        </div>
+
+        <div class="action-buttons">
+          <button id="btn-clear" class="btn btn-secondary">CLEAR</button>
+          <button id="btn-rebet" class="btn btn-secondary">REBET</button>
+          <button id="btn-deal-now" class="btn btn-primary">DEAL NOW</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
