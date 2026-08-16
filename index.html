@@ -1,844 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complete Baccarat Casino Simulator</title>
-  <style>
-    :root {
-      --bg-color: #0b0b0b;
-      --panel-bg: #121212;
-      --felt-gradient: radial-gradient(circle, #0f522b 0%, #051e0f 100%);
-      --text-color: #ffffff;
-      --gold: #d4af37;
-      --gold-hover: #f1c40f;
-      --player-blue: #8bbce8;
-      --banker-red: #f1a3a3;
-      --tie-green: #2ecc71;
-    }
-
-    [data-theme="light"] {
-      --bg-color: #e0e0e0;
-      --panel-bg: #ffffff;
-      --felt-gradient: radial-gradient(circle, #1a7a42 0%, #0d4223 100%);
-      --text-color: #111111;
-      --gold: #b8860b;
-      --gold-hover: #d4af37;
-      --player-blue: #1976d2;
-      --banker-red: #d32f2f;
-      --tie-green: #388e3c;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 10px;
-    }
-
-    .game-container {
-      width: 100%;
-      max-width: 500px;
-      background: var(--panel-bg);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      position: relative;
-    }
-
-    /* Top Bar & Account */
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: rgba(0,0,0,0.2);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      font-size: 13px;
-    }
-
-    .balance-display {
-      font-weight: bold;
-      color: var(--gold);
-    }
-
-    .theme-toggle, .mode-btn {
-      background: none;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      padding: 2px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-    }
-
-    /* Table & Dealer Section */
-    .table-area {
-      background: var(--felt-gradient);
-      padding: 16px;
-      position: relative;
-      min-height: 380px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .dealer-avatar {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      font-size: 11px;
-      color: rgba(255,255,255,0.8);
-    }
-
-    .dealer-avatar img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-    }
-
-    .timer-banner {
-      text-align: center;
-      margin-top: 45px;
-      font-weight: bold;
-      font-size: 14px;
-      color: var(--gold);
-      height: 20px;
-    }
-
-    /* Dynamic Hands Layout */
-    .table-hands {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      z-index: 1;
-      margin-top: 10px;
-    }
-
-    .hand-side {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .hand-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .hand-title {
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      font-family: 'Times New Roman', serif;
-    }
-
-    .player-side .hand-title { color: var(--player-blue); }
-    .banker-side .hand-title { color: var(--banker-red); }
-
-    .score-badge {
-      width: 22px;
-      height: 22px;
-      background-color: #121212;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    /* Fixed Card Spacing & Dealing Animation */
-    .cards-row {
-      display: flex;
-      gap: 6px;
-    }
-
-    .card-frame {
-      width: 54px;
-      height: 78px;
-      background: #ffffff;
-      border-radius: 6px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-      position: relative;
-      border: 1px solid #ccc;
-      animation: dealCard 0.4s ease-out;
-    }
-
-    @keyframes dealCard {
-      0% { transform: translateY(-50px) scale(0.5); opacity: 0; }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .card-frame svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* Centered Modal Overlay */
-    .modal-overlay {
-      position: absolute;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, 0);
-      width: 80%;
-      background: rgba(15, 15, 15, 0.95);
-      border: 2px solid var(--gold);
-      border-radius: 12px;
-      padding: 14px 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-
-    .modal-title {
-      color: var(--gold);
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 1px;
-    }
-
-    .modal-amount {
-      font-size: 15px;
-      font-weight: bold;
-    }
-
-    .modal-winners {
-      color: var(--tie-green);
-      font-size: 12px;
-    }
-
-    /* Betting Grid */
-    .betting-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-top: 15px;
-      z-index: 1;
-    }
-
-    .bet-card {
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid #2a4332;
-      border-radius: 8px;
-      padding: 6px 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      height: 95px;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.2s;
-    }
-
-    .bet-card.winning {
-      border-color: var(--gold);
-      box-shadow: 0 0 12px var(--gold);
-      background: rgba(212, 175, 55, 0.2);
-    }
-
-    .bet-card.losing {
-      opacity: 0.4;
-    }
-
-    .bet-pool {
-      font-size: 10px;
-      color: #aaa;
-      width: 100%;
-      text-align: right;
-      padding-right: 4px;
-    }
-
-    .bet-title {
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .player-bet .bet-title { color: var(--player-blue); }
-    .tie-bet .bet-title { color: var(--tie-green); }
-    .banker-bet .bet-title { color: var(--banker-red); }
-
-    .bet-odds {
-      font-size: 10px;
-      color: #888;
-    }
-
-    .chip-container {
-      height: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .chip {
-      width: 22px;
-      height: 22px;
-      background: radial-gradient(circle, #e74c3c 0%, #c0392b 100%);
-      border: 2px dashed #fff;
-      border-radius: 50%;
-      font-size: 9px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-    }
-
-    .bet-amount {
-      font-size: 11px;
-      font-weight: bold;
-      color: var(--gold);
-    }
-
-    /* Chip Selector Toolbar */
-    .chip-selector {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px;
-      background: rgba(0,0,0,0.3);
-    }
-
-    .chip-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 2px dashed #fff;
-      color: #fff;
-      font-size: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.1s;
-    }
-
-    .chip-btn.selected {
-      transform: scale(1.18);
-      border-style: solid;
-      border-color: var(--gold);
-    }
-
-    .chip-10 { background: #2980b9; }
-    .chip-50 { background: #27ae60; }
-    .chip-100 { background: #8e44ad; }
-    .chip-500 { background: #d35400; }
-    .chip-1000 { background: #c0392b; }
-
-    /* Control Panel */
-    .controls {
-      background: #181818;
-      padding: 10px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-    }
-
-    .btn {
-      background: var(--gold);
-      color: #000;
-      border: none;
-      padding: 8px 4px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-      text-align: center;
-    }
-
-    .btn:hover { background: var(--gold-hover); }
-
-    /* Roadmaps & Stats Drawer */
-    .drawer {
-      padding: 12px;
-      background: #141414;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      font-size: 12px;
-    }
-
-    .drawer-title {
-      font-weight: bold;
-      color: var(--gold);
-      margin-bottom: 6px;
-    }
-
-    .bead-plate {
-      display: grid;
-      grid-template-rows: repeat(6, 16px);
-      grid-auto-flow: column;
-      grid-auto-columns: 16px;
-      gap: 2px;
-      overflow-x: auto;
-      background: #000;
-      padding: 4px;
-      border-radius: 4px;
-      height: 115px;
-    }
-
-    .bead {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      font-size: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    .bead-P { background: var(--player-blue); }
-    .bead-B { background: var(--banker-red); }
-    .bead-T { background: var(--tie-green); }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 8px;
-      text-align: center;
-    }
-
-    .stat-card {
-      background: #1c1c1c;
-      padding: 6px;
-      border-radius: 4px;
-    }
-
-    .stat-val {
-      font-weight: bold;
-      color: var(--gold);
-      font-size: 13px;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SPEED BACCARAT LIVE - VIP Salon</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <div class="game-container" id="app">
-    <!-- Top Account Bar -->
-    <div class="top-bar">
-      <div>
-        <span>Balance: </span>
-        <span class="balance-display" id="user-balance">₱10,000</span>
+  <!-- Speed Baccarat Live Entrance Overlay -->
+  <div id="casino-entrance" class="casino-entrance">
+    
+    <!-- Floating 3D Cards Visible in Opening Screen -->
+    <div class="entrance-floating-cards">
+      <div class="opening-card card-tl">
+        <div class="card-inner black">
+          <div class="card-val">A<span>♠</span></div>
+          <div class="card-suit-big">♠</div>
+          <div class="card-val bot">A<span>♠</span></div>
+        </div>
       </div>
-      <div>
-        <button class="mode-btn" onclick="toggleTurbo()">Turbo: <span id="turbo-status">OFF</span></button>
-        <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
+      <div class="opening-card card-ml">
+        <div class="card-inner red">
+          <div class="card-val">K<span>♥</span></div>
+          <div class="card-suit-big">♥</div>
+          <div class="card-val bot">K<span>♥</span></div>
+        </div>
       </div>
+      <div class="opening-card card-bl">
+        <div class="card-inner black">
+          <div class="card-val">8<span>♣</span></div>
+          <div class="card-suit-big">♣</div>
+          <div class="card-val bot">8<span>♣</span></div>
+        </div>
+      </div>
+
+      <div class="opening-card card-tr">
+        <div class="card-inner red">
+          <div class="card-val">9<span>♦</span></div>
+          <div class="card-suit-big">♦</div>
+          <div class="card-val bot">9<span>♦</span></div>
+        </div>
+      </div>
+      <div class="opening-card card-mr">
+        <div class="card-inner red">
+          <div class="card-val">Q<span>♥</span></div>
+          <div class="card-suit-big">♥</div>
+          <div class="card-val bot">Q<span>♥</span></div>
+        </div>
+      </div>
+      <div class="opening-card card-br">
+        <div class="card-inner black">
+          <div class="card-val">J<span>♠</span></div>
+          <div class="card-suit-big">♠</div>
+          <div class="card-val bot">J<span>♠</span></div>
+        </div>
+      </div>
+
+      <div class="casino-glow-flare flare-left"></div>
+      <div class="casino-glow-flare flare-right"></div>
     </div>
 
-    <!-- Table Felt Area -->
-    <div class="table-area">
-      <!-- Dealer Visual -->
-      <div class="dealer-avatar">
-        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mia" alt="Dealer">
-        <div>Host: Mia</div>
-      </div>
-
-      <!-- Timer / Status -->
-      <div class="timer-banner" id="status-banner">PLACE YOUR BETS</div>
-
-      <!-- Hands Display -->
-      <div class="table-hands">
-        <!-- Player -->
-        <div class="hand-side player-side">
-          <div class="hand-header">
-            <span class="hand-title">PLAYER</span>
-            <div class="score-badge" id="player-score">0</div>
+    <!-- Door Background Panels -->
+    <div class="entrance-doors door-left"></div>
+    <div class="entrance-doors door-right"></div>
+    
+    <!-- Central Entrance Box -->
+    <div class="entrance-content">
+      <div class="dealer-hero-card">
+        <div class="dealer-portrait-wrapper">
+          <img src="dealer.jpg" alt="Live Dealer" class="dealer-live-img" />
+          <div class="live-studio-badge">
+            <span class="pulse-dot"></span> LIVE DEALER • MIA
           </div>
-          <div class="cards-row" id="player-cards"></div>
         </div>
 
-        <!-- Banker -->
-        <div class="hand-side banker-side">
-          <div class="hand-header">
-            <span class="hand-title">BANKER</span>
-            <div class="score-badge" id="banker-score">0</div>
+        <div class="speed-logo-container">
+          <div class="speed-slash">SPEED</div>
+          <h1 class="logo-baccarat">BACCARAT</h1>
+          <div class="logo-live-tag">
+            <span class="tag-bars">||</span> LIVE
           </div>
-          <div class="cards-row" id="banker-cards"></div>
         </div>
       </div>
 
-      <!-- Result Modal Banner -->
-      <div class="modal-overlay" id="result-modal" style="display: none;">
-        <div class="modal-title" id="modal-title">BANKER WINS!</div>
-        <div class="modal-amount" id="modal-amount">+ ₱0</div>
-        <div class="modal-winners" id="modal-winners">138 Players Won</div>
+      <div class="entrance-loader-box">
+        <div class="entrance-loader-bar" id="entrance-loader-bar"></div>
       </div>
+      <span class="entrance-status" id="entrance-status">CONNECTING TO VIP SPEED STREAM...</span>
 
-      <!-- Betting Areas Grid -->
-      <div class="betting-grid">
-        <div class="bet-card player-bet" id="card-PLAYER" onclick="placeBet('PLAYER')">
-          <div class="bet-pool">₱15,100</div>
-          <div class="bet-title">PLAYER</div>
-          <div class="bet-odds">1:1</div>
-          <div class="chip-container" id="chip-PLAYER"></div>
-          <div class="bet-amount" id="amt-PLAYER">₱0</div>
-        </div>
-
-        <div class="bet-card tie-bet" id="card-TIE" onclick="placeBet('TIE')">
-          <div class="bet-pool">₱3,340</div>
-          <div class="bet-title">TIE</div>
-          <div class="bet-odds">8:1</div>
-          <div class="chip-container" id="chip-TIE"></div>
-          <div class="bet-amount" id="amt-TIE">₱0</div>
-        </div>
-
-        <div class="bet-card banker-bet" id="card-BANKER" onclick="placeBet('BANKER')">
-          <div class="bet-pool">₱22,300</div>
-          <div class="bet-title">BANKER</div>
-          <div class="bet-odds">0.95:1</div>
-          <div class="chip-container" id="chip-BANKER"></div>
-          <div class="bet-amount" id="amt-BANKER">₱0</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Denomination Chip Selector -->
-    <div class="chip-selector">
-      <div class="chip-btn chip-10 selected" onclick="selectChip(10, this)">₱10</div>
-      <div class="chip-btn chip-50" onclick="selectChip(50, this)">₱50</div>
-      <div class="chip-btn chip-100" onclick="selectChip(100, this)">₱100</div>
-      <div class="chip-btn chip-500" onclick="selectChip(500, this)">₱500</div>
-      <div class="chip-btn chip-1000" onclick="selectChip(1000, this)">₱1K</div>
-    </div>
-
-    <!-- Control Buttons -->
-    <div class="controls">
-      <button class="btn" onclick="undoBet()">UNDO</button>
-      <button class="btn" onclick="clearBets()">CLEAR</button>
-      <button class="btn" onclick="rebet()">REBET</button>
-      <button class="btn" onclick="dealGame()">DEAL</button>
-    </div>
-
-    <!-- Statistics & Roadmap Bead Plate -->
-    <div class="drawer">
-      <div class="drawer-title">BEAD PLATE ROADMAP</div>
-      <div class="bead-plate" id="bead-plate"></div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div>Rounds</div>
-          <div class="stat-val" id="stat-rounds">0</div>
-        </div>
-        <div class="stat-card">
-          <div>Player Wins</div>
-          <div class="stat-val" id="stat-p-wins">0%</div>
-        </div>
-        <div class="stat-card">
-          <div>Banker Wins</div>
-          <div class="stat-val" id="stat-b-wins">0%</div>
-        </div>
-      </div>
+      <button id="btn-enter-salon" class="btn-enter-salon hidden">ENTER STUDIO</button>
     </div>
   </div>
 
-  <script>
-    // Audio Context Synthesizer for Casino SFX
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playTone(freq, type = 'sine', duration = 0.1) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function playChipSound() { playTone(800, 'triangle', 0.05); }
-    function playDealSound() { playTone(400, 'sine', 0.08); }
-    function playWinSound() { playTone(587.33, 'sine', 0.2); setTimeout(() => playTone(880, 'sine', 0.3), 150); }
-
-    // Game State Engine
-    const suits = { '♠': 'black', '♣': 'black', '♥': 'red', '♦': 'red' };
-    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-
-    let balance = 10000;
-    let selectedDenomination = 10;
-    let bets = { PLAYER: 0, TIE: 0, BANKER: 0 };
-    let betHistory = [];
-    let previousBets = { PLAYER: 0, TIE: 0, BANKER: 0 };
-    let roadmap = [];
-    let isTurbo = false;
-
-    let stats = { rounds: 0, playerWins: 0, bankerWins: 0, tieWins: 0 };
-
-    // Card Renderer Engine
-    function generateCardSVG(rank, suit) {
-      const isRed = suits[suit] === 'red';
-      const color = isRed ? '#d32f2f' : '#1a1a1a';
-
-      let centerGraphic = `<text x="27" y="44" font-size="20" text-anchor="middle" fill="${color}">${suit}</text>`;
-      if (['J', 'Q', 'K'].includes(rank)) {
-        centerGraphic = `
-          <rect x="12" y="16" width="30" height="46" rx="2" fill="#FFF8E7" stroke="#c0c0c0"/>
-          <path d="M12 16 H42 V39 H12 Z" fill="${isRed ? '#D32F2F' : '#1976D2'}"/>
-          <circle cx="27" cy="39" r="6" fill="#FBC02D"/>
-          <text x="27" y="43" font-size="9" text-anchor="middle" fill="#000">${suit}</text>
-        `;
-      }
-
-      return `
-        <div class="card-frame">
-          <svg viewBox="0 0 54 78" xmlns="http://www.w3.org/2000/svg">
-            <text x="4" y="12" font-size="10" font-weight="bold" fill="${color}">${rank}</text>
-            <text x="4" y="21" font-size="9" fill="${color}">${suit}</text>
-            ${centerGraphic}
-            <g transform="rotate(180 27 39)">
-              <text x="4" y="12" font-size="10" font-weight="bold" fill="${color}">${rank}</text>
-              <text x="4" y="21" font-size="9" fill="${color}">${suit}</text>
-            </g>
-          </svg>
+  <!-- Main Game App -->
+  <div class="baccarat-live-app">
+    <!-- Top Live Header -->
+    <header class="live-header">
+      <div class="live-left-meta">
+        <div class="live-badge">
+          <span class="pulse-dot"></span> LIVE
         </div>
-      `;
-    }
+        <div class="dealer-mini-profile">
+          <img src="dealer.jpg" alt="Live Dealer" class="dealer-thumb" />
+          <div class="table-info">
+            <span class="table-name">SPEED TABLE #01</span>
+            <span class="dealer-name">HOST: MIA</span>
+          </div>
+        </div>
+      </div>
 
-    function selectChip(val, el) {
-      selectedDenomination = val;
-      document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('selected'));
-      el.classList.add('selected');
-      playChipSound();
-    }
+      <!-- Live Speed Betting Countdown Bar -->
+      <div class="live-timer-module" id="timer-module">
+        <div class="timer-label" id="timer-label">PLACE YOUR BETS</div>
+        <div class="timer-bar-track">
+          <div class="timer-bar-fill" id="timer-bar-fill"></div>
+        </div>
+      </div>
 
-    function placeBet(target) {
-      if (balance < selectedDenomination) {
-        alert('Insufficient Virtual Balance!');
-        return;
-      }
+      <div class="live-right-meta">
+        <div class="stat-pill balance-pill">
+          <span class="stat-label">BALANCE</span>
+          <span class="stat-val" id="balance-display">$10,000</span>
+        </div>
+        <div class="stat-pill bet-pill">
+          <span class="stat-label">BET</span>
+          <span class="stat-val" id="total-bet-display">$0</span>
+        </div>
+        <button id="sound-toggle" class="icon-btn" title="Toggle Sound">🔊</button>
+      </div>
+    </header>
 
-      balance -= selectedDenomination;
-      bets[target] += selectedDenomination;
-      betHistory.push({ target, amount: selectedDenomination });
+    <!-- Main Casino Table Area With Live Player Side Feed -->
+    <main class="table-container">
       
-      updateUI();
-      playChipSound();
-    }
+      <!-- Left Live Online Players Activity Feed -->
+      <aside class="live-players-sidebar">
+        <div class="sidebar-header">
+          <span>ONLINE (248)</span>
+          <span class="green-dot">●</span>
+        </div>
+        <div class="players-feed-list" id="players-feed-list">
+          <!-- Dynamically Populated Bot Bets -->
+        </div>
+      </aside>
 
-    function undoBet() {
-      if (betHistory.length === 0) return;
-      const last = betHistory.pop();
-      bets[last.target] -= last.amount;
-      balance += last.amount;
-      updateUI();
-      playChipSound();
-    }
+      <!-- Center Main Table -->
+      <div class="table-leather-rim">
+        <div class="felt-table">
+          
+          <!-- Top Safe Area Header inside Table -->
+          <div class="table-top-safe-row">
+            <!-- Dealer Speech (Safely Padded) -->
+            <div class="dealer-speech-bubble" id="dealer-speech">
+              <span class="speech-text" id="speech-text">"Welcome to Speed Baccarat! Place your bets."</span>
+            </div>
 
-    function clearBets() {
-      const totalToReturn = bets.PLAYER + bets.TIE + bets.BANKER;
-      balance += totalToReturn;
-      bets = { PLAYER: 0, TIE: 0, BANKER: 0 };
-      betHistory = [];
-      updateUI();
-      playChipSound();
-    }
+            <!-- Studio Watermark -->
+            <div class="felt-watermark">
+              <div class="wm-title">SPEED BACCARAT LIVE</div>
+              <div class="wm-rules">BANKER PAYS 0.95:1 • PLAYER PAYS 1:1 • TIE PAYS 8:1</div>
+            </div>
 
-    function rebet() {
-      const totalNeeded = previousBets.PLAYER + previousBets.TIE + previousBets.BANKER;
-      if (balance < totalNeeded) {
-        alert('Insufficient balance to re-bet!');
-        return;
-      }
+            <!-- Physical Dealing Shoe -->
+            <div class="physical-shoe" id="physical-shoe">
+              <div class="shoe-deck-front"></div>
+              <div class="shoe-indicator-tag">
+                <span>SHOE</span>
+                <strong id="shoe-count">416</strong>
+              </div>
+            </div>
+          </div>
 
-      clearBets();
-      bets = { ...previousBets };
-      balance -= totalNeeded;
-      updateUI();
-      playChipSound();
-    }
+          <!-- Result Modal Overlay -->
+          <div id="live-announcement" class="live-announcement hidden">
+            <div class="announcement-card" id="announcement-card">
+              <div class="announcement-title" id="announcement-title">BANKER WINS</div>
+              <div class="announcement-payout" id="announcement-payout">+ $500</div>
+              <div class="announcement-sub" id="announcement-sub">142 Players Won</div>
+            </div>
+          </div>
 
-    function getCardValue(rank) {
-      if (['10', 'J', 'Q', 'K'].includes(rank)) return 0;
-      if (rank === 'A') return 1;
-      return parseInt(rank);
-    }
+          <!-- Hands Arena -->
+          <div class="hands-arena">
+            <!-- Player Hand -->
+            <div class="hand-column" id="player-hand-container">
+              <div class="hand-header">
+                <span class="hand-tag player-tag">PLAYER</span>
+                <div class="score-badge" id="player-score">0</div>
+              </div>
+              <div class="card-slots" id="player-cards">
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+              </div>
+            </div>
 
-    function drawRandomCard() {
-      const suitList = Object.keys(suits);
-      const randomRank = ranks[Math.floor(Math.random() * ranks.length)];
-      const randomSuit = suitList[Math.floor(Math.random() * suitList.length)];
-      return { rank: randomRank, suit: randomSuit };
-    }
+            <!-- Center Table Crest -->
+            <div class="arena-center-divider">
+              <div class="table-crest">
+                <span>VIP</span>
+              </div>
+            </div>
 
-    async function dealGame() {
-      const totalWagered = bets.PLAYER + bets.TIE + bets.BANKER;
-      if (totalWagered === 0) {
-        alert('Please place a bet before dealing!');
-        return;
-      }
+            <!-- Banker Hand -->
+            <div class="hand-column" id="banker-hand-container">
+              <div class="hand-header">
+                <span class="hand-tag banker-tag">BANKER</span>
+                <div class="score-badge" id="banker-score">0</div>
+              </div>
+              <div class="card-slots" id="banker-cards">
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+                <div class="card-placeholder"><div class="slot-dashed"></div></div>
+              </div>
+            </div>
+          </div>
 
-      previousBets = { ...bets };
-      document.getElementById('result-modal').style.display = 'none';
-      document.querySelectorAll('.bet-card').forEach(c => c.classList.remove('winning', 'losing'));
-      document.getElementById('status-banner').innerText = "NO MORE BETS";
+          <!-- Betting Grid Layout -->
+          <div class="betting-layout">
+            <!-- Player Spot -->
+            <div class="bet-spot spot-player" data-target="player" id="spot-player">
+              <div class="spot-live-totals" id="live-pool-player">👥 $14,250</div>
+              <div class="chip-stack-zone" id="stack-player"></div>
+              <div class="spot-meta">
+                <span class="spot-title">PLAYER</span>
+                <span class="spot-odds">1 : 1</span>
+                <span class="spot-my-bet" id="amt-player">$0</span>
+              </div>
+            </div>
 
-      let pHand = [drawRandomCard(), drawRandomCard()];
-      let bHand = [drawRandomCard(), drawRandomCard()];
+            <!-- Tie Spot -->
+            <div class="bet-spot spot-tie" data-target="tie" id="spot-tie">
+              <div class="spot-live-totals" id="live-pool-tie">👥 $2,840</div>
+              <div class="chip-stack-zone" id="stack-tie"></div>
+              <div class="spot-meta">
+                <span class="spot-title">TIE</span>
+                <span class="spot-odds">8 : 1</span>
+                <span class="spot-my-bet" id="amt-tie">$0</span>
+              </div>
+            </div>
 
-      const delay = isTurbo ? 100 : 400;
+            <!-- Banker Spot -->
+            <div class="bet-spot spot-banker" data-target="banker" id="spot-banker">
+              <div class="spot-live-totals" id="live-pool-banker">👥 $21,100</div>
+              <div class="chip-stack-zone" id="stack-banker"></div>
+              <div class="spot-meta">
+                <span class="spot-title">BANKER</span>
+                <span class="spot-odds">0.95 : 1</span>
+                <span class="spot-my-bet" id="amt-banker">$0</span>
+              </div>
+            </div>
+          </div>
 
-      // Initial Deal Animation
-      renderCards('player-cards', pHand);
-      playDealSound();
-      await new Promise(r => setTimeout(r, delay));
+        </div>
+      </div>
+    </main>
 
-      renderCards('banker-cards', bHand);
-      playDealSound();
-      await new Promise(r => setTimeout(r, delay));
+    <!-- Bottom Multi-Road Live Scoreboard & Controls Panel -->
+    <footer class="bottom-panel">
+      <div class="roadmap-dashboard">
+        <div class="roadmap-panel bead-plate-panel">
+          <div class="roadmap-header">BEAD ROAD</div>
+          <div class="bead-plate" id="bead-plate"></div>
+        </div>
 
-      let pScore = pHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
-      let bScore = bHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
+        <div class="roadmap-panel big-road-panel">
+          <div class="roadmap-header">BIG ROAD</div>
+          <div class="big-road-grid" id="big-road"></div>
+        </div>
 
-      document.getElementById('player-score').innerText = pScore;
-      document.getElementById('banker-score').innerText = bScore;
+        <div class="roadmap-stats">
+          <div class="stat-row"><span class="c-p">PLAYER:</span> <strong id="stat-p">0%</strong></div>
+          <div class="stat-row"><span class="c-b">BANKER:</span> <strong id="stat-b">0%</strong></div>
+          <div class="stat-row"><span class="c-t">TIE:</span> <strong id="stat-t">0%</strong></div>
+        </div>
+      </div>
 
-      // Automatic Baccarat Third-Card Rules
-      const isNatural = (pScore >= 8 || bScore >= 8);
+      <div class="controls-wrapper">
+        <div class="chip-selector">
+          <button class="chip-btn chip-5 active" data-val="5">
+            <span class="chip-inner">5</span>
+          </button>
+          <button class="chip-btn chip-25" data-val="25">
+            <span class="chip-inner">25</span>
+          </button>
+          <button class="chip-btn chip-100" data-val="100">
+            <span class="chip-inner">100</span>
+          </button>
+          <button class="chip-btn chip-500" data-val="500">
+            <span class="chip-inner">500</span>
+          </button>
+          <button class="chip-btn chip-1000" data-val="1000">
+            <span class="chip-inner">1K</span>
+          </button>
+        </div>
 
-      if (!isNatural) {
-        // Player Third Card Rule
-        let playerThirdVal = null;
-        if (pScore <= 5) {
-          const thirdCard = drawRandomCard();
-          pHand.push(thirdCard);
-          playerThirdVal = getCardValue(thirdCard.rank);
-          renderCards('player-cards', pHand);
-          playDealSound();
-          pScore = pHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
-          document.getElementById('player-score').innerText = pScore;
-          await new Promise(r => setTimeout(r, delay));
-        }
+        <div class="action-buttons">
+          <button id="btn-clear" class="btn btn-secondary">CLEAR</button>
+          <button id="btn-rebet" class="btn btn-secondary">REBET</button>
+          <button id="btn-deal-now" class="btn btn-primary">DEAL NOW</button>
+        </div>
+      </div>
+    </footer>
+  </div>
 
-        // Banker Third Card Rule
-        let bankerDraws = false;
-        if (playerThirdVal === null) {
-          if (bScore <= 5) bankerDraws = true;
-        } else {
-          if (bScore <= 2) bankerDraws = true;
-          else if (bScore === 3 && playerThirdVal !== 8) bankerDraws = true;
-          else if (bScore === 4 && [2,3,4,5,6,7].includes(playerThirdVal)) bankerDraws = true;
-          else if (bScore === 5 && [4,5,6,7].includes(playerThirdVal)) bankerDraws = true;
-          else if (bScore === 6 && [6,7].includes(playerThirdVal)) bankerDraws = true;
-        }
-
-        if (bankerDraws) {
-          bHand.push(drawRandomCard());
-          renderCards('banker-cards', bHand);
-          playDealSound();
-          bScore = bHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
-          document.getElementById('banker-score').innerText = bScore;
-          await new Promise(r => setTimeout(r, delay));
-        }
-      }
-
-      // Winner Determination & Payouts
-      let winner = 'TIE';
-      if (pScore > bScore) winner = 'PLAYER';
-      else if (bScore > pScore) winner = 'BANKER';
-
-      let payout = 0;
-      if (winner === 'PLAYER') payout = bets.PLAYER * 2;
-      else if (winner === 'BANKER') payout = bets.BANKER * 1.95;
-      else if (winner === 'TIE') payout = bets.TIE * 9 + bets.PLAYER + bets.BANKER;
-
-      balance += payout;
-      const netWin = payout - totalWagered;
-
-      // Update UI & Modal
-      document.getElementById(`card-${winner}`).classList.add('winning');
-      ['PLAYER', 'TIE', 'BANKER'].filter(t => t !== winner).forEach(t => {
-        document.getElementById(`card-${t}`).classList.add('losing');
-      });
-
-      if (netWin > 0) playWinSound();
-
-      showModal(winner, netWin);
-      updateRoadmap(winner);
-      
-      bets = { PLAYER: 0, TIE: 0, BANKER: 0 };
-      betHistory = [];
-      updateUI();
-      document.getElementById('status-banner').innerText = "PLACE YOUR BETS";
-    }
-
-    function renderCards(id, hand) {
-      document.getElementById(id).innerHTML = hand.map(c => generateCardSVG(c.rank, c.suit)).join('');
-    }
-
-    function showModal(winner, netWin) {
-      const modal = document.getElementById('result-modal');
-      document.getElementById('modal-title').innerText = `${winner} WINS!`;
-      document.getElementById('modal-amount').innerText = netWin >= 0 ? `+ ₱${netWin}` : `- ₱${Math.abs(netWin)}`;
-      document.getElementById('modal-amount').style.color = netWin >= 0 ? 'var(--tie-green)' : '#e74c3c';
-      document.getElementById('modal-winners').innerText = `${Math.floor(Math.random() * 80 + 100)} Players Won`;
-      modal.style.display = 'flex';
-    }
-
-    function updateRoadmap(winner) {
-      roadmap.push(winner);
-      stats.rounds++;
-      if (winner === 'PLAYER') stats.playerWins++;
-      if (winner === 'BANKER') stats.bankerWins++;
-      if (winner === 'TIE') stats.tieWins++;
-
-      const plate = document.getElementById('bead-plate');
-      const bead = document.createElement('div');
-      bead.className = `bead bead-${winner[0]}`;
-      bead.innerText = winner[0];
-      plate.appendChild(bead);
-      plate.scrollLeft = plate.scrollWidth;
-
-      document.getElementById('stat-rounds').innerText = stats.rounds;
-      document.getElementById('stat-p-wins').innerText = `${Math.round((stats.playerWins / stats.rounds) * 100)}%`;
-      document.getElementById('stat-b-wins').innerText = `${Math.round((stats.bankerWins / stats.rounds) * 100)}%`;
-    }
-
-    function updateUI() {
-      document.getElementById('user-balance').innerText = `₱${balance.toLocaleString()}`;
-      ['PLAYER', 'TIE', 'BANKER'].forEach(t => {
-        document.getElementById(`amt-${t}`).innerText = `₱${bets[t]}`;
-        document.getElementById(`chip-${t}`).innerHTML = bets[t] > 0 ? `<div class="chip">${bets[t]}</div>` : '';
-      });
-    }
-
-    function toggleTheme() {
-      const current = document.body.getAttribute('data-theme');
-      document.body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
-    }
-
-    function toggleTurbo() {
-      isTurbo = !isTurbo;
-      document.getElementById('turbo-status').innerText = isTurbo ? 'ON' : 'OFF';
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
