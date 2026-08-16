@@ -3,8 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baccarat Table - Authentic Cards</title>
+  <title>Complete Baccarat Casino Simulator</title>
   <style>
+    :root {
+      --bg-color: #0b0b0b;
+      --panel-bg: #121212;
+      --felt-gradient: radial-gradient(circle, #0f522b 0%, #051e0f 100%);
+      --text-color: #ffffff;
+      --gold: #d4af37;
+      --gold-hover: #f1c40f;
+      --player-blue: #8bbce8;
+      --banker-red: #f1a3a3;
+      --tie-green: #2ecc71;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #e0e0e0;
+      --panel-bg: #ffffff;
+      --felt-gradient: radial-gradient(circle, #1a7a42 0%, #0d4223 100%);
+      --text-color: #111111;
+      --gold: #b8860b;
+      --gold-hover: #d4af37;
+      --player-blue: #1976d2;
+      --banker-red: #d32f2f;
+      --tie-green: #388e3c;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -13,59 +37,95 @@
     }
 
     body {
-      background-color: #0d0d0d;
-      color: #fff;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      padding: 10px;
     }
 
     .game-container {
       width: 100%;
-      max-width: 650px;
-      background: #111;
+      max-width: 500px;
+      background: var(--panel-bg);
       border-radius: 12px;
       overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      position: relative;
     }
 
-    /* Table Felt */
+    /* Top Bar & Account */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 13px;
+    }
+
+    .balance-display {
+      font-weight: bold;
+      color: var(--gold);
+    }
+
+    .theme-toggle, .mode-btn {
+      background: none;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    /* Table & Dealer Section */
     .table-area {
-      background: radial-gradient(circle, #0e4d28 0%, #051d0f 100%);
-      padding: 40px 20px;
+      background: var(--felt-gradient);
+      padding: 16px;
       position: relative;
-      min-height: 280px;
+      min-height: 380px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
     }
 
-    /* VIP Badge */
-    .vip-badge {
+    .dealer-avatar {
       position: absolute;
-      top: 50%;
+      top: 10px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 55px;
-      height: 55px;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #d4af37;
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
     }
 
-    /* Table Hands Setup */
+    .dealer-avatar img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+    }
+
+    .timer-banner {
+      text-align: center;
+      margin-top: 45px;
+      font-weight: bold;
+      font-size: 14px;
+      color: var(--gold);
+      height: 20px;
+    }
+
+    /* Dynamic Hands Layout */
     .table-hands {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      padding: 0 10px;
       z-index: 1;
+      margin-top: 10px;
     }
 
     .hand-side {
@@ -77,267 +137,708 @@
     .hand-header {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
 
     .hand-title {
-      font-size: 18px;
-      font-weight: bold;
-      letter-spacing: 2px;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1px;
       font-family: 'Times New Roman', serif;
     }
 
-    .player-side .hand-title {
-      color: #8bbce8;
-      text-shadow: 0 0 6px rgba(139, 188, 232, 0.4);
-    }
-
-    .banker-side .hand-title {
-      color: #f1a3a3;
-      text-shadow: 0 0 6px rgba(241, 163, 163, 0.4);
-    }
+    .player-side .hand-title { color: var(--player-blue); }
+    .banker-side .hand-title { color: var(--banker-red); }
 
     .score-badge {
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       background-color: #121212;
-      border: 1.5px solid #d4af37;
+      border: 1px solid var(--gold);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
     }
 
-    /* Cards Flex Container */
+    /* Fixed Card Spacing & Dealing Animation */
     .cards-row {
       display: flex;
-      gap: 12px; /* Fixed card crowding */
+      gap: 6px;
     }
 
-    /* Individual Authentic Card Base Styling */
-    .card {
-      width: 64px;
-      height: 90px;
+    .card-frame {
+      width: 54px;
+      height: 78px;
       background: #ffffff;
       border-radius: 6px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
       position: relative;
-      border: 1px solid #d0d0d0;
-      user-select: none;
-      overflow: hidden;
+      border: 1px solid #ccc;
+      animation: dealCard 0.4s ease-out;
     }
 
-    .card.red {
-      color: #d32f2f;
+    @keyframes dealCard {
+      0% { transform: translateY(-50px) scale(0.5); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
     }
 
-    .card.black {
-      color: #1a1a1a;
+    .card-frame svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    /* Corner Rank & Suit Indices */
-    .card-corner {
+    /* Centered Modal Overlay */
+    .modal-overlay {
       position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 80%;
+      background: rgba(15, 15, 15, 0.95);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 14px 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      line-height: 0.9;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .modal-title {
+      color: var(--gold);
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .modal-amount {
+      font-size: 15px;
       font-weight: bold;
     }
 
-    .card-corner.top-left {
-      top: 4px;
-      left: 4px;
+    .modal-winners {
+      color: var(--tie-green);
+      font-size: 12px;
     }
 
-    .card-corner.bottom-right {
-      bottom: 4px;
-      right: 4px;
-      transform: rotate(180deg);
-    }
-
-    .card-corner .rank {
-      font-size: 14px;
-    }
-
-    .card-corner .suit-mini {
-      font-size: 11px;
-      margin-top: 1px;
-    }
-
-    /* Card Pips Layout (Standard 7 Layout) */
-    .pips-7 {
-      position: absolute;
-      top: 16px;
-      bottom: 16px;
-      left: 18px;
-      right: 18px;
+    /* Betting Grid */
+    .betting-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: repeat(3, 1fr);
-      font-size: 13px;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 15px;
+      z-index: 1;
+    }
+
+    .bet-card {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #2a4332;
+      border-radius: 8px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-items: center;
+      justify-content: space-between;
+      height: 95px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
     }
 
-    .pip-center-top {
-      position: absolute;
-      top: 28%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 13px;
+    .bet-card.winning {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+      background: rgba(212, 175, 55, 0.2);
     }
 
-    /* Jack & Queen Face Card Illustration Graphics */
-    .face-illustration {
-      position: absolute;
-      top: 16px;
-      bottom: 16px;
-      left: 14px;
-      right: 14px;
-      border: 1px solid #c0c0c0;
-      background-size: cover;
-      background-position: center;
+    .bet-card.losing {
+      opacity: 0.4;
+    }
+
+    .bet-pool {
+      font-size: 10px;
+      color: #aaa;
+      width: 100%;
+      text-align: right;
+      padding-right: 4px;
+    }
+
+    .bet-title {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .player-bet .bet-title { color: var(--player-blue); }
+    .tie-bet .bet-title { color: var(--tie-green); }
+    .banker-bet .bet-title { color: var(--banker-red); }
+
+    .bet-odds {
+      font-size: 10px;
+      color: #888;
+    }
+
+    .chip-container {
+      height: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 2px;
     }
 
-    /* Double-headed Royalty Graphic Placeholder */
-    .face-illustration svg {
-      width: 100%;
-      height: 100%;
+    .chip {
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle, #e74c3c 0%, #c0392b 100%);
+      border: 2px dashed #fff;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .bet-amount {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--gold);
+    }
+
+    /* Chip Selector Toolbar */
+    .chip-selector {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+    }
+
+    .chip-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px dashed #fff;
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+
+    .chip-btn.selected {
+      transform: scale(1.18);
+      border-style: solid;
+      border-color: var(--gold);
+    }
+
+    .chip-10 { background: #2980b9; }
+    .chip-50 { background: #27ae60; }
+    .chip-100 { background: #8e44ad; }
+    .chip-500 { background: #d35400; }
+    .chip-1000 { background: #c0392b; }
+
+    /* Control Panel */
+    .controls {
+      background: #181818;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .btn {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 8px 4px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .btn:hover { background: var(--gold-hover); }
+
+    /* Roadmaps & Stats Drawer */
+    .drawer {
+      padding: 12px;
+      background: #141414;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px;
+    }
+
+    .drawer-title {
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .bead-plate {
+      display: grid;
+      grid-template-rows: repeat(6, 16px);
+      grid-auto-flow: column;
+      grid-auto-columns: 16px;
+      gap: 2px;
+      overflow-x: auto;
+      background: #000;
+      padding: 4px;
+      border-radius: 4px;
+      height: 115px;
+    }
+
+    .bead {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .bead-P { background: var(--player-blue); }
+    .bead-B { background: var(--banker-red); }
+    .bead-T { background: var(--tie-green); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .stat-card {
+      background: #1c1c1c;
+      padding: 6px;
+      border-radius: 4px;
+    }
+
+    .stat-val {
+      font-weight: bold;
+      color: var(--gold);
+      font-size: 13px;
     }
   </style>
 </head>
 <body>
 
-  <div class="game-container">
-    <div class="table-area">
-      
-      <div class="vip-badge">VIP</div>
+  <div class="game-container" id="app">
+    <!-- Top Account Bar -->
+    <div class="top-bar">
+      <div>
+        <span>Balance: </span>
+        <span class="balance-display" id="user-balance">₱10,000</span>
+      </div>
+      <div>
+        <button class="mode-btn" onclick="toggleTurbo()">Turbo: <span id="turbo-status">OFF</span></button>
+        <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
+      </div>
+    </div>
 
+    <!-- Table Felt Area -->
+    <div class="table-area">
+      <!-- Dealer Visual -->
+      <div class="dealer-avatar">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mia" alt="Dealer">
+        <div>Host: Mia</div>
+      </div>
+
+      <!-- Timer / Status -->
+      <div class="timer-banner" id="status-banner">PLACE YOUR BETS</div>
+
+      <!-- Hands Display -->
       <div class="table-hands">
-        
-        <!-- PLAYER HAND (J♣, J♥) -->
+        <!-- Player -->
         <div class="hand-side player-side">
           <div class="hand-header">
             <span class="hand-title">PLAYER</span>
-            <div class="score-badge">0</div>
+            <div class="score-badge" id="player-score">0</div>
           </div>
-          <div class="cards-row">
-            
-            <!-- J Clubs -->
-            <div class="card black">
-              <div class="card-corner top-left">
-                <span class="rank">J</span>
-                <span class="suit-mini">♣</span>
-              </div>
-              <div class="face-illustration">
-                <!-- SVG Vector Face Card representation -->
-                <svg viewBox="0 0 40 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="40" height="56" fill="#FFF8E7"/>
-                  <path d="M5 5 H35 V27 H5 Z" fill="#D32F2F"/>
-                  <path d="M5 29 H35 V51 H5 Z" fill="#1976D2"/>
-                  <circle cx="20" cy="16" r="6" fill="#FBC02D"/>
-                  <circle cx="20" cy="40" r="6" fill="#FBC02D"/>
-                  <text x="20" y="20" font-size="10" text-anchor="middle" fill="#000">♣</text>
-                  <text x="20" y="44" font-size="10" text-anchor="middle" fill="#000">♣</text>
-                </svg>
-              </div>
-              <div class="card-corner bottom-right">
-                <span class="rank">J</span>
-                <span class="suit-mini">♣</span>
-              </div>
-            </div>
-
-            <!-- J Hearts -->
-            <div class="card red">
-              <div class="card-corner top-left">
-                <span class="rank">J</span>
-                <span class="suit-mini">♥</span>
-              </div>
-              <div class="face-illustration">
-                <svg viewBox="0 0 40 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="40" height="56" fill="#FFF8E7"/>
-                  <path d="M5 5 H35 V27 H5 Z" fill="#1976D2"/>
-                  <path d="M5 29 H35 V51 H5 Z" fill="#D32F2F"/>
-                  <circle cx="20" cy="16" r="6" fill="#FBC02D"/>
-                  <circle cx="20" cy="40" r="6" fill="#FBC02D"/>
-                  <text x="20" y="20" font-size="10" text-anchor="middle" fill="#D32F2F">♥</text>
-                  <text x="20" y="44" font-size="10" text-anchor="middle" fill="#D32F2F">♥</text>
-                </svg>
-              </div>
-              <div class="card-corner bottom-right">
-                <span class="rank">J</span>
-                <span class="suit-mini">♥</span>
-              </div>
-            </div>
-
-          </div>
+          <div class="cards-row" id="player-cards"></div>
         </div>
 
-        <!-- BANKER HAND (7♦, Q♣) -->
+        <!-- Banker -->
         <div class="hand-side banker-side">
           <div class="hand-header">
             <span class="hand-title">BANKER</span>
-            <div class="score-badge">7</div>
+            <div class="score-badge" id="banker-score">0</div>
           </div>
-          <div class="cards-row">
-            
-            <!-- 7 Diamonds (Exact Pip Arrangement) -->
-            <div class="card red">
-              <div class="card-corner top-left">
-                <span class="rank">7</span>
-                <span class="suit-mini">♦</span>
-              </div>
-              <div class="pip-center-top">♦</div>
-              <div class="pips-7">
-                <span>♦</span><span>♦</span>
-                <span>♦</span><span>♦</span>
-                <span style="transform: rotate(180deg);">♦</span><span style="transform: rotate(180deg);">♦</span>
-              </div>
-              <div class="card-corner bottom-right">
-                <span class="rank">7</span>
-                <span class="suit-mini">♦</span>
-              </div>
-            </div>
-
-            <!-- Q Clubs -->
-            <div class="card black">
-              <div class="card-corner top-left">
-                <span class="rank">Q</span>
-                <span class="suit-mini">♣</span>
-              </div>
-              <div class="face-illustration">
-                <svg viewBox="0 0 40 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="40" height="56" fill="#FFF8E7"/>
-                  <path d="M5 5 H35 V27 H5 Z" fill="#388E3C"/>
-                  <path d="M5 29 H35 V51 H5 Z" fill="#D32F2F"/>
-                  <polygon points="20,10 26,22 14,22" fill="#FBC02D"/>
-                  <polygon points="20,46 26,34 14,34" fill="#FBC02D"/>
-                  <text x="20" y="20" font-size="9" text-anchor="middle" fill="#000">♣</text>
-                  <text x="20" y="42" font-size="9" text-anchor="middle" fill="#000">♣</text>
-                </svg>
-              </div>
-              <div class="card-corner bottom-right">
-                <span class="rank">Q</span>
-                <span class="suit-mini">♣</span>
-              </div>
-            </div>
-
-          </div>
+          <div class="cards-row" id="banker-cards"></div>
         </div>
-
       </div>
 
+      <!-- Result Modal Banner -->
+      <div class="modal-overlay" id="result-modal" style="display: none;">
+        <div class="modal-title" id="modal-title">BANKER WINS!</div>
+        <div class="modal-amount" id="modal-amount">+ ₱0</div>
+        <div class="modal-winners" id="modal-winners">138 Players Won</div>
+      </div>
+
+      <!-- Betting Areas Grid -->
+      <div class="betting-grid">
+        <div class="bet-card player-bet" id="card-PLAYER" onclick="placeBet('PLAYER')">
+          <div class="bet-pool">₱15,100</div>
+          <div class="bet-title">PLAYER</div>
+          <div class="bet-odds">1:1</div>
+          <div class="chip-container" id="chip-PLAYER"></div>
+          <div class="bet-amount" id="amt-PLAYER">₱0</div>
+        </div>
+
+        <div class="bet-card tie-bet" id="card-TIE" onclick="placeBet('TIE')">
+          <div class="bet-pool">₱3,340</div>
+          <div class="bet-title">TIE</div>
+          <div class="bet-odds">8:1</div>
+          <div class="chip-container" id="chip-TIE"></div>
+          <div class="bet-amount" id="amt-TIE">₱0</div>
+        </div>
+
+        <div class="bet-card banker-bet" id="card-BANKER" onclick="placeBet('BANKER')">
+          <div class="bet-pool">₱22,300</div>
+          <div class="bet-title">BANKER</div>
+          <div class="bet-odds">0.95:1</div>
+          <div class="chip-container" id="chip-BANKER"></div>
+          <div class="bet-amount" id="amt-BANKER">₱0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Denomination Chip Selector -->
+    <div class="chip-selector">
+      <div class="chip-btn chip-10 selected" onclick="selectChip(10, this)">₱10</div>
+      <div class="chip-btn chip-50" onclick="selectChip(50, this)">₱50</div>
+      <div class="chip-btn chip-100" onclick="selectChip(100, this)">₱100</div>
+      <div class="chip-btn chip-500" onclick="selectChip(500, this)">₱500</div>
+      <div class="chip-btn chip-1000" onclick="selectChip(1000, this)">₱1K</div>
+    </div>
+
+    <!-- Control Buttons -->
+    <div class="controls">
+      <button class="btn" onclick="undoBet()">UNDO</button>
+      <button class="btn" onclick="clearBets()">CLEAR</button>
+      <button class="btn" onclick="rebet()">REBET</button>
+      <button class="btn" onclick="dealGame()">DEAL</button>
+    </div>
+
+    <!-- Statistics & Roadmap Bead Plate -->
+    <div class="drawer">
+      <div class="drawer-title">BEAD PLATE ROADMAP</div>
+      <div class="bead-plate" id="bead-plate"></div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div>Rounds</div>
+          <div class="stat-val" id="stat-rounds">0</div>
+        </div>
+        <div class="stat-card">
+          <div>Player Wins</div>
+          <div class="stat-val" id="stat-p-wins">0%</div>
+        </div>
+        <div class="stat-card">
+          <div>Banker Wins</div>
+          <div class="stat-val" id="stat-b-wins">0%</div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <script>
+    // Audio Context Synthesizer for Casino SFX
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type = 'sine', duration = 0.1) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playChipSound() { playTone(800, 'triangle', 0.05); }
+    function playDealSound() { playTone(400, 'sine', 0.08); }
+    function playWinSound() { playTone(587.33, 'sine', 0.2); setTimeout(() => playTone(880, 'sine', 0.3), 150); }
+
+    // Game State Engine
+    const suits = { '♠': 'black', '♣': 'black', '♥': 'red', '♦': 'red' };
+    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+    let balance = 10000;
+    let selectedDenomination = 10;
+    let bets = { PLAYER: 0, TIE: 0, BANKER: 0 };
+    let betHistory = [];
+    let previousBets = { PLAYER: 0, TIE: 0, BANKER: 0 };
+    let roadmap = [];
+    let isTurbo = false;
+
+    let stats = { rounds: 0, playerWins: 0, bankerWins: 0, tieWins: 0 };
+
+    // Card Renderer Engine
+    function generateCardSVG(rank, suit) {
+      const isRed = suits[suit] === 'red';
+      const color = isRed ? '#d32f2f' : '#1a1a1a';
+
+      let centerGraphic = `<text x="27" y="44" font-size="20" text-anchor="middle" fill="${color}">${suit}</text>`;
+      if (['J', 'Q', 'K'].includes(rank)) {
+        centerGraphic = `
+          <rect x="12" y="16" width="30" height="46" rx="2" fill="#FFF8E7" stroke="#c0c0c0"/>
+          <path d="M12 16 H42 V39 H12 Z" fill="${isRed ? '#D32F2F' : '#1976D2'}"/>
+          <circle cx="27" cy="39" r="6" fill="#FBC02D"/>
+          <text x="27" y="43" font-size="9" text-anchor="middle" fill="#000">${suit}</text>
+        `;
+      }
+
+      return `
+        <div class="card-frame">
+          <svg viewBox="0 0 54 78" xmlns="http://www.w3.org/2000/svg">
+            <text x="4" y="12" font-size="10" font-weight="bold" fill="${color}">${rank}</text>
+            <text x="4" y="21" font-size="9" fill="${color}">${suit}</text>
+            ${centerGraphic}
+            <g transform="rotate(180 27 39)">
+              <text x="4" y="12" font-size="10" font-weight="bold" fill="${color}">${rank}</text>
+              <text x="4" y="21" font-size="9" fill="${color}">${suit}</text>
+            </g>
+          </svg>
+        </div>
+      `;
+    }
+
+    function selectChip(val, el) {
+      selectedDenomination = val;
+      document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      playChipSound();
+    }
+
+    function placeBet(target) {
+      if (balance < selectedDenomination) {
+        alert('Insufficient Virtual Balance!');
+        return;
+      }
+
+      balance -= selectedDenomination;
+      bets[target] += selectedDenomination;
+      betHistory.push({ target, amount: selectedDenomination });
+      
+      updateUI();
+      playChipSound();
+    }
+
+    function undoBet() {
+      if (betHistory.length === 0) return;
+      const last = betHistory.pop();
+      bets[last.target] -= last.amount;
+      balance += last.amount;
+      updateUI();
+      playChipSound();
+    }
+
+    function clearBets() {
+      const totalToReturn = bets.PLAYER + bets.TIE + bets.BANKER;
+      balance += totalToReturn;
+      bets = { PLAYER: 0, TIE: 0, BANKER: 0 };
+      betHistory = [];
+      updateUI();
+      playChipSound();
+    }
+
+    function rebet() {
+      const totalNeeded = previousBets.PLAYER + previousBets.TIE + previousBets.BANKER;
+      if (balance < totalNeeded) {
+        alert('Insufficient balance to re-bet!');
+        return;
+      }
+
+      clearBets();
+      bets = { ...previousBets };
+      balance -= totalNeeded;
+      updateUI();
+      playChipSound();
+    }
+
+    function getCardValue(rank) {
+      if (['10', 'J', 'Q', 'K'].includes(rank)) return 0;
+      if (rank === 'A') return 1;
+      return parseInt(rank);
+    }
+
+    function drawRandomCard() {
+      const suitList = Object.keys(suits);
+      const randomRank = ranks[Math.floor(Math.random() * ranks.length)];
+      const randomSuit = suitList[Math.floor(Math.random() * suitList.length)];
+      return { rank: randomRank, suit: randomSuit };
+    }
+
+    async function dealGame() {
+      const totalWagered = bets.PLAYER + bets.TIE + bets.BANKER;
+      if (totalWagered === 0) {
+        alert('Please place a bet before dealing!');
+        return;
+      }
+
+      previousBets = { ...bets };
+      document.getElementById('result-modal').style.display = 'none';
+      document.querySelectorAll('.bet-card').forEach(c => c.classList.remove('winning', 'losing'));
+      document.getElementById('status-banner').innerText = "NO MORE BETS";
+
+      let pHand = [drawRandomCard(), drawRandomCard()];
+      let bHand = [drawRandomCard(), drawRandomCard()];
+
+      const delay = isTurbo ? 100 : 400;
+
+      // Initial Deal Animation
+      renderCards('player-cards', pHand);
+      playDealSound();
+      await new Promise(r => setTimeout(r, delay));
+
+      renderCards('banker-cards', bHand);
+      playDealSound();
+      await new Promise(r => setTimeout(r, delay));
+
+      let pScore = pHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
+      let bScore = bHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
+
+      document.getElementById('player-score').innerText = pScore;
+      document.getElementById('banker-score').innerText = bScore;
+
+      // Automatic Baccarat Third-Card Rules
+      const isNatural = (pScore >= 8 || bScore >= 8);
+
+      if (!isNatural) {
+        // Player Third Card Rule
+        let playerThirdVal = null;
+        if (pScore <= 5) {
+          const thirdCard = drawRandomCard();
+          pHand.push(thirdCard);
+          playerThirdVal = getCardValue(thirdCard.rank);
+          renderCards('player-cards', pHand);
+          playDealSound();
+          pScore = pHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
+          document.getElementById('player-score').innerText = pScore;
+          await new Promise(r => setTimeout(r, delay));
+        }
+
+        // Banker Third Card Rule
+        let bankerDraws = false;
+        if (playerThirdVal === null) {
+          if (bScore <= 5) bankerDraws = true;
+        } else {
+          if (bScore <= 2) bankerDraws = true;
+          else if (bScore === 3 && playerThirdVal !== 8) bankerDraws = true;
+          else if (bScore === 4 && [2,3,4,5,6,7].includes(playerThirdVal)) bankerDraws = true;
+          else if (bScore === 5 && [4,5,6,7].includes(playerThirdVal)) bankerDraws = true;
+          else if (bScore === 6 && [6,7].includes(playerThirdVal)) bankerDraws = true;
+        }
+
+        if (bankerDraws) {
+          bHand.push(drawRandomCard());
+          renderCards('banker-cards', bHand);
+          playDealSound();
+          bScore = bHand.reduce((a, c) => a + getCardValue(c.rank), 0) % 10;
+          document.getElementById('banker-score').innerText = bScore;
+          await new Promise(r => setTimeout(r, delay));
+        }
+      }
+
+      // Winner Determination & Payouts
+      let winner = 'TIE';
+      if (pScore > bScore) winner = 'PLAYER';
+      else if (bScore > pScore) winner = 'BANKER';
+
+      let payout = 0;
+      if (winner === 'PLAYER') payout = bets.PLAYER * 2;
+      else if (winner === 'BANKER') payout = bets.BANKER * 1.95;
+      else if (winner === 'TIE') payout = bets.TIE * 9 + bets.PLAYER + bets.BANKER;
+
+      balance += payout;
+      const netWin = payout - totalWagered;
+
+      // Update UI & Modal
+      document.getElementById(`card-${winner}`).classList.add('winning');
+      ['PLAYER', 'TIE', 'BANKER'].filter(t => t !== winner).forEach(t => {
+        document.getElementById(`card-${t}`).classList.add('losing');
+      });
+
+      if (netWin > 0) playWinSound();
+
+      showModal(winner, netWin);
+      updateRoadmap(winner);
+      
+      bets = { PLAYER: 0, TIE: 0, BANKER: 0 };
+      betHistory = [];
+      updateUI();
+      document.getElementById('status-banner').innerText = "PLACE YOUR BETS";
+    }
+
+    function renderCards(id, hand) {
+      document.getElementById(id).innerHTML = hand.map(c => generateCardSVG(c.rank, c.suit)).join('');
+    }
+
+    function showModal(winner, netWin) {
+      const modal = document.getElementById('result-modal');
+      document.getElementById('modal-title').innerText = `${winner} WINS!`;
+      document.getElementById('modal-amount').innerText = netWin >= 0 ? `+ ₱${netWin}` : `- ₱${Math.abs(netWin)}`;
+      document.getElementById('modal-amount').style.color = netWin >= 0 ? 'var(--tie-green)' : '#e74c3c';
+      document.getElementById('modal-winners').innerText = `${Math.floor(Math.random() * 80 + 100)} Players Won`;
+      modal.style.display = 'flex';
+    }
+
+    function updateRoadmap(winner) {
+      roadmap.push(winner);
+      stats.rounds++;
+      if (winner === 'PLAYER') stats.playerWins++;
+      if (winner === 'BANKER') stats.bankerWins++;
+      if (winner === 'TIE') stats.tieWins++;
+
+      const plate = document.getElementById('bead-plate');
+      const bead = document.createElement('div');
+      bead.className = `bead bead-${winner[0]}`;
+      bead.innerText = winner[0];
+      plate.appendChild(bead);
+      plate.scrollLeft = plate.scrollWidth;
+
+      document.getElementById('stat-rounds').innerText = stats.rounds;
+      document.getElementById('stat-p-wins').innerText = `${Math.round((stats.playerWins / stats.rounds) * 100)}%`;
+      document.getElementById('stat-b-wins').innerText = `${Math.round((stats.bankerWins / stats.rounds) * 100)}%`;
+    }
+
+    function updateUI() {
+      document.getElementById('user-balance').innerText = `₱${balance.toLocaleString()}`;
+      ['PLAYER', 'TIE', 'BANKER'].forEach(t => {
+        document.getElementById(`amt-${t}`).innerText = `₱${bets[t]}`;
+        document.getElementById(`chip-${t}`).innerHTML = bets[t] > 0 ? `<div class="chip">${bets[t]}</div>` : '';
+      });
+    }
+
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+    }
+
+    function toggleTurbo() {
+      isTurbo = !isTurbo;
+      document.getElementById('turbo-status').innerText = isTurbo ? 'ON' : 'OFF';
+    }
+  </script>
 </body>
 </html>
